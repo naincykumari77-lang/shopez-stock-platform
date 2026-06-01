@@ -85,26 +85,30 @@ const AdminDashboard = () => {
 
 }
 
-  const fetchOrders = async () => {
+  const fetchOrders = () => {
 
-    try {
+  let allOrders = []
 
-      const ordersData =
+  Object.keys(localStorage).forEach((key) => {
+
+    if (key.startsWith('orders_')) {
+
+      const userOrders =
         JSON.parse(
-          localStorage.getItem('orders')
+          localStorage.getItem(key)
         ) || []
 
-      setOrders(ordersData)
-
+      allOrders = [
+        ...allOrders,
+        ...userOrders
+      ]
     }
 
-    catch (error) {
+  })
 
-      console.log(error)
+  setOrders(allOrders)
 
-    }
-
-  }
+}
 
   const handleChange = (e) => {
 
@@ -271,7 +275,60 @@ const AdminDashboard = () => {
   <h2 className="mb-4">
     
   </h2>
+<h3 className="mb-4 mt-5">
+  User Orders Summary
+</h3>
 
+<table className="table table-dark table-striped">
+
+  <thead>
+
+    <tr>
+
+      <th>User Email</th>
+
+      <th>Total Orders</th>
+
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+    {users.map((user) => {
+
+      const userOrders =
+        JSON.parse(
+          localStorage.getItem(
+            `orders_${user._id}`
+          )
+        ) || []
+
+      return (
+
+        <tr key={user._id}>
+
+          <td>{user.email}</td>
+
+          <td>
+            {
+              userOrders.filter(
+                order =>
+                  order.status !==
+                  'Cancelled'
+              ).length
+            }
+          </td>
+
+        </tr>
+
+      )
+
+    })}
+
+  </tbody>
+
+</table>
   <ManageOrders />
 
 </div>

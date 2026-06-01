@@ -12,42 +12,44 @@ const Orders = () => {
 
   useEffect(() => {
 
-    const savedOrders =
-      JSON.parse(
-        localStorage.getItem('orders')
-      ) || []
+  const user = JSON.parse(
+    localStorage.getItem('user')
+  )
 
-    setOrders(savedOrders)
+  if (!user) return
 
-  }, [])
-
-  const cancelOrder = (id) => {
-
-    const updatedOrders =
-      orders.map((order) =>
-
-        order._id === id
-
-          ? {
-              ...order,
-              status: 'Cancelled'
-            }
-
-          : order
-
+  const savedOrders =
+    JSON.parse(
+      localStorage.getItem(
+        `orders_${user._id}`
       )
+    ) || []
 
-    setOrders(updatedOrders)
+  setOrders(savedOrders)
 
-    localStorage.setItem(
-      'orders',
-      JSON.stringify(updatedOrders)
+}, [])
+
+  const cancelOrder = (index) => {
+
+  const user = JSON.parse(
+    localStorage.getItem('user')
+  )
+
+  const updatedOrders =
+    orders.filter(
+      (_, i) => i !== index
     )
 
-    alert('Order Cancelled Successfully')
+  setOrders(updatedOrders)
 
-  }
+  localStorage.setItem(
+    `orders_${user._id}`,
+    JSON.stringify(updatedOrders)
+  )
 
+  alert('Order Cancelled')
+
+}
   return (
 
     <div>
@@ -124,7 +126,7 @@ const Orders = () => {
                         <button
                           className='btn btn-danger flex-fill'
                           onClick={() =>
-                            cancelOrder(order._id)
+                            cancelOrder(index)
                           }
                         >
                           Cancel Order

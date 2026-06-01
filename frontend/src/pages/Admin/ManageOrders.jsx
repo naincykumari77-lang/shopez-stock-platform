@@ -10,14 +10,28 @@ function ManageOrders() {
 
   useEffect(() => {
 
-    const savedOrders =
-      JSON.parse(
-        localStorage.getItem("orders")
-      ) || [];
+  let allOrders = []
 
-    setOrders(savedOrders);
+  Object.keys(localStorage).forEach((key) => {
 
-  }, []);
+    if (key.startsWith('orders_')) {
+
+      const userOrders =
+        JSON.parse(
+          localStorage.getItem(key)
+        ) || []
+
+      allOrders = [
+        ...allOrders,
+        ...userOrders
+      ]
+    }
+
+  })
+
+  setOrders(allOrders)
+
+}, [])
 
   const updateStatus = (
     index,
